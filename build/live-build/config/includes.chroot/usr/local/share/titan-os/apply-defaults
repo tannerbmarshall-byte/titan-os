@@ -9,4 +9,6 @@ fi
 
 mkdir -p "$TARGET_HOME/.config/openbox"
 cp /etc/skel/.config/openbox/rc.xml "$TARGET_HOME/.config/openbox/rc.xml"
+cp /etc/skel/.config/openbox/autostart "$TARGET_HOME/.config/openbox/autostart"
+chmod 0755 "$TARGET_HOME/.config/openbox/autostart"
 chown -R "$(stat -c '%u:%g' "$TARGET_HOME")" "$TARGET_HOME/.config"
