@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Titan OS Desktop Shell
+Comment=Start the Titan OS panel and desktop manager
+Exec=sh -c 'lxqt-panel & pcmanfm-qt --desktop &'
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
