@@ -44,7 +44,27 @@ jobs:
             sh -c 'apt-get update >/dev/null && scripts/check-package-list-debian.sh'
 
       - name: Build ISO
-        run: sudo make build
+        run: |
+          docker run --privileged --rm \
+            -e DEBIAN_FRONTEND=noninteractive \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            debian:trixie \
+            bash -euxo pipefail -c '
+              apt-get update
+              apt-get install --yes --no-install-recommends \
+                ca-certificates \
+                debootstrap \
+                dosfstools \
+                grub-efi-amd64-bin \
+                grub-pc-bin \
+                live-build \
+                make \
+                isolinux \
+                syslinux-common \
+                xorriso
+              make build
+            '
 
       - name: Record build metadata
         run: sudo scripts/record-build-metadata.sh build/live-build/build-metadata.txt
