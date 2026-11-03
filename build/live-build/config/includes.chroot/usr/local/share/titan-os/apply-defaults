@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+TARGET_HOME=${1:-}
+if [ -z "$TARGET_HOME" ] || [ ! -d "$TARGET_HOME" ]; then
+    echo "Usage: apply-defaults USER_HOME" >&2
+    exit 2
+fi
+
+mkdir -p "$TARGET_HOME/.config/openbox"
+cp /etc/skel/.config/openbox/rc.xml "$TARGET_HOME/.config/openbox/rc.xml"
+chown -R "$(stat -c '%u:%g' "$TARGET_HOME")" "$TARGET_HOME/.config"

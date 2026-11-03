@@ -1,0 +1,10 @@
+// Titan OS Alpha 1 update policy. Users may disable these settings.
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+Unattended-Upgrade::Automatic-Reboot "false";
+Unattended-Upgrade::Remove-Unused-Dependencies "false";
+Unattended-Upgrade::Allowed-Origins {
+    "Debian:trixie";
+    "Debian:trixie-updates";
+    "Debian:trixie-security";
+};

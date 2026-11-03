@@ -1,0 +1,68 @@
+name: Build Titan OS ISO
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'build/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'Makefile'
+      - '.github/workflows/build-iso.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install Debian Live build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            debootstrap \
+            dosfstools \
+            grub-efi-amd64-bin \
+            grub-pc-bin \
+            isolinux \
+            live-build \
+            syslinux-common \
+            xorriso
+
+      - name: Run repository checks
+        run: |
+          make test
+          make audit
+
+      - name: Check package names in Debian trixie
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/workspace" -w /workspace debian:trixie \
+            sh -c 'apt-get update >/dev/null && scripts/check-package-list-debian.sh'
+
+      - name: Build ISO
+        run: sudo make build
+
+      - name: Record build metadata
+        run: sudo scripts/record-build-metadata.sh build/live-build/build-metadata.txt
+
+      - name: Validate ISO structure and checksum
+        run: |
+          ISO=$(find build/live-build -maxdepth 1 -type f -name '*.iso' -print -quit)
+          CHECKSUM=build/live-build/titan-os-alpha-1.iso.sha256
+          test -n "$ISO"
+          sudo scripts/validate-iso.sh "$ISO" "$CHECKSUM"
+          sudo chown -R "$USER":"$USER" build/live-build
+
+      - name: Upload ISO and build evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-os-alpha-1
+          path: |
+            build/live-build/*.iso
+            build/live-build/*.sha256
+            build/live-build/build-metadata.txt
+          if-no-files-found: error

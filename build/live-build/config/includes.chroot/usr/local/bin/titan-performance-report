@@ -1,0 +1,78 @@
+#!/bin/sh
+set -eu
+
+usage() {
+    echo "Usage: titan-performance-report [--save PATH]" >&2
+    exit 2
+}
+
+output_path=
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --save) [ "$#" -ge 2 ] || usage; output_path=$2; shift 2 ;;
+        --help|-h) usage ;;
+        *) usage ;;
+    esac
+done
+
+if [ -n "$output_path" ]; then
+    mkdir -p "$(dirname -- "$output_path")"
+    umask 077
+    exec > "$output_path"
+fi
+
+section() { printf '\n== %s ==\n' "$1"; }
+command_report() {
+    name=$1
+    shift
+    if command -v "$name" >/dev/null 2>&1; then
+        "$@" 2>&1 || printf 'Status: command returned non-zero\n'
+    else
+        printf 'Status: %s is unavailable\n' "$name"
+    fi
+}
+
+printf 'Titan OS performance baseline\n'
+printf 'Generated (UTC): '
+date -u '+%Y-%m-%dT%H:%M:%SZ'
+printf 'These measurements are observations, not performance guarantees.\n'
+
+section 'Memory'
+command_report free free -h
+if [ -r /proc/meminfo ]; then
+    awk '/^(MemTotal|MemFree|MemAvailable|SwapTotal|SwapFree):/ { print }' /proc/meminfo
+fi
+
+section 'CPU idle sample'
+if [ -r /proc/stat ]; then
+    awk '/^cpu / { print "sample_1", $0; exit }' /proc/stat
+    sleep 1
+    awk '/^cpu / { print "sample_2", $0; exit }' /proc/stat
+else
+    printf 'Status: /proc/stat unavailable\n'
+fi
+
+section 'Boot and startup'
+command_report systemd-analyze systemd-analyze
+command_report systemd-analyze systemd-analyze blame
+command_report systemctl systemctl list-unit-files --state=enabled --no-pager
+
+section 'Disk'
+command_report df df -h /
+
+section 'Network'
+command_report nmcli nmcli general status
+command_report nmcli nmcli device status
+
+section 'Audio'
+command_report wpctl wpctl status
+
+section 'Display and brightness'
+command_report xrandr xrandr --query
+command_report brightnessctl brightnessctl info
+
+section 'Suspend/resume'
+printf 'Status: manual test required; use titan-suspend-diagnostics before and after each cycle.\n'
+
+section 'Result classification'
+printf 'Idle-memory goal: approximately 300–500 MB on a minimal installation; not measured in this report until run in Titan OS.\n'

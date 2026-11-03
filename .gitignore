@@ -1,0 +1,16 @@
+# live-build generated state
+build/live-build/cache/
+build/live-build/chroot/
+build/live-build/installer/
+build/live-build/binary/
+build/live-build/.build/
+build/live-build/*.iso
+build/live-build/*.sha256
+build/live-build/*.iso.sha256
+build/live-build/*.log
+build/live-build/build-metadata.txt
+
+# Local measurements and reports
+measurements/results/
+*.hardware-report.txt
+.DS_Store

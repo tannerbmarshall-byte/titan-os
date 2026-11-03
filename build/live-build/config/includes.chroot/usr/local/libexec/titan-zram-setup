@@ -1,0 +1,74 @@
+#!/bin/sh
+set -eu
+
+CONFIG_FILE=/etc/default/titan-zram
+ZRAM_DEVICE=/dev/zram0
+
+if [ -r "$CONFIG_FILE" ]; then
+    # shellcheck disable=SC1091
+    . "$CONFIG_FILE"
+fi
+
+: "${ZRAM_FRACTION:=50}"
+: "${ZRAM_MAX_MIB:=4096}"
+: "${ZRAM_PRIORITY:=100}"
+
+case "$ZRAM_FRACTION" in
+    ''|*[!0-9]*) echo "Titan zram: ZRAM_FRACTION must be an integer" >&2; exit 1 ;;
+esac
+case "$ZRAM_MAX_MIB" in
+    ''|*[!0-9]*) echo "Titan zram: ZRAM_MAX_MIB must be an integer" >&2; exit 1 ;;
+esac
+case "$ZRAM_PRIORITY" in
+    ''|*[!0-9-]*) echo "Titan zram: ZRAM_PRIORITY must be an integer" >&2; exit 1 ;;
+esac
+
+if [ "$ZRAM_FRACTION" -lt 1 ] || [ "$ZRAM_FRACTION" -gt 100 ]; then
+    echo "Titan zram: ZRAM_FRACTION must be between 1 and 100" >&2
+    exit 1
+fi
+
+if [ "$ZRAM_MAX_MIB" -lt 1 ]; then
+    echo "Titan zram: ZRAM_MAX_MIB must be greater than zero" >&2
+    exit 1
+fi
+
+if swapon --show=NAME --noheadings 2>/dev/null | awk -v device="$ZRAM_DEVICE" '$1 == device { found=1 } END { exit !found }'; then
+    echo "Titan zram: $ZRAM_DEVICE is already active"
+    exit 0
+fi
+
+if ! command -v zramctl >/dev/null 2>&1 || ! command -v mkswap >/dev/null 2>&1 || ! command -v swapon >/dev/null 2>&1; then
+    echo "Titan zram: required util-linux commands are unavailable" >&2
+    exit 1
+fi
+
+mem_kib=$(awk '/^MemTotal:/ { print $2; exit }' /proc/meminfo)
+if [ -z "$mem_kib" ] || [ "$mem_kib" -lt 1 ]; then
+    echo "Titan zram: unable to detect physical memory" >&2
+    exit 1
+fi
+
+size_mib=$((mem_kib * ZRAM_FRACTION / 100 / 1024))
+if [ "$size_mib" -lt 1 ]; then
+    size_mib=1
+fi
+if [ "$size_mib" -gt "$ZRAM_MAX_MIB" ]; then
+    size_mib="$ZRAM_MAX_MIB"
+fi
+
+if [ ! -e "$ZRAM_DEVICE" ]; then
+    modprobe zram 2>/dev/null || true
+fi
+
+if [ ! -e "$ZRAM_DEVICE" ]; then
+    echo "Titan zram: $ZRAM_DEVICE is unavailable" >&2
+    exit 1
+fi
+
+zramctl --reset "$ZRAM_DEVICE" >/dev/null 2>&1 || true
+zramctl --size "${size_mib}M" "$ZRAM_DEVICE" >/dev/null
+mkswap -L titan-zram "$ZRAM_DEVICE" >/dev/null
+swapon --priority "$ZRAM_PRIORITY" "$ZRAM_DEVICE"
+
+echo "Titan zram: enabled $ZRAM_DEVICE at ${size_mib} MiB with priority $ZRAM_PRIORITY"

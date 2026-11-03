@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+# Service enablement is explicit so the image does not depend on package
+# maintainer defaults. NetworkManager is enabled by the Debian package when
+# present; zram is enabled by the tracked systemd link in includes.chroot.
+if command -v systemctl >/dev/null 2>&1; then
+    systemctl enable NetworkManager.service 2>/dev/null || true
+    systemctl enable titan-zram.service 2>/dev/null || true
+    systemctl enable acpid.service 2>/dev/null || true
+    systemctl enable power-profiles-daemon.service 2>/dev/null || true
+fi

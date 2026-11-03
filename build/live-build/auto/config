@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+# Titan OS Alpha 1: Debian 13.7/trixie amd64 live ISO.
+# Keep the suite and architecture explicit so a future Debian release cannot
+# silently change the build target.
+lb config \
+    --distribution trixie \
+    --architectures amd64 \
+    --binary-image iso \
+    --bootloaders "grub-pc,grub-efi" \
+    --uefi-secure-boot disable \
+    --system live \
+    --initsystem systemd \
+    --archive-areas "main contrib" \
+    --apt-recommends true \
+    --firmware-binary true \
+    --firmware-chroot true \
+    --checksums sha256

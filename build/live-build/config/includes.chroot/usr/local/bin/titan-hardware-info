@@ -1,0 +1,100 @@
+#!/bin/sh
+set -eu
+
+usage() {
+    echo "Usage: titan-hardware-info [--save PATH]" >&2
+    exit 2
+}
+
+output_path=
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --save) [ "$#" -ge 2 ] || usage; output_path=$2; shift 2 ;;
+        --help|-h) usage ;;
+        *) usage ;;
+    esac
+done
+
+if [ -n "$output_path" ]; then
+    mkdir -p "$(dirname -- "$output_path")"
+    umask 077
+    exec > "$output_path"
+fi
+
+section() { printf '\n== %s ==\n' "$1"; }
+status() { printf 'Compatibility status: %s\n' "$1"; }
+command_report() {
+    name=$1
+    shift
+    if command -v "$name" >/dev/null 2>&1; then
+        "$@" 2>&1 || printf 'Status: command returned non-zero\n'
+    else
+        printf 'Status: %s is unavailable\n' "$name"
+    fi
+}
+
+printf 'Titan OS offline hardware report\n'
+printf 'Generated (UTC): '
+date -u '+%Y-%m-%dT%H:%M:%SZ'
+printf 'This report records detection only; it does not confirm hardware support.\n'
+
+section 'System identity'
+printf 'Kernel: '; uname -srmo 2>/dev/null || printf 'unknown\n'
+printf 'Architecture: '; uname -m 2>/dev/null || printf 'unknown\n'
+printf 'Model: '; cat /sys/devices/virtual/dmi/id/product_name 2>/dev/null || printf 'unknown\n'
+printf 'Board: '; cat /sys/devices/virtual/dmi/id/board_name 2>/dev/null || printf 'unknown\n'
+printf 'BIOS: '; cat /sys/devices/virtual/dmi/id/bios_version 2>/dev/null || printf 'unknown\n'
+
+section 'CPU and memory'
+status 'detected but untested'
+command_report lscpu lscpu
+command_report free free -h
+section 'PCI devices and drivers'
+status 'detected but untested'
+command_report lspci lspci -nnk
+section 'USB devices'
+status 'detected but untested'
+command_report lsusb lsusb
+section 'Keyboard and trackpad'
+status 'detected but untested; keys, tapping, scrolling, and gestures require testing'
+command_report libinput libinput list-devices
+section 'Network'
+status 'detected but untested; firmware and connectivity still require testing'
+command_report nmcli nmcli device status
+command_report rfkill rfkill list
+section 'Audio'
+status 'detected but untested'
+command_report wpctl wpctl status
+section 'Display'
+status 'detected but untested; acceleration and external outputs require testing'
+command_report xrandr xrandr --query
+section 'Power and battery'
+status 'detected but untested; suspend and resume require testing'
+command_report upower upower -e
+if [ -d /sys/class/power_supply ]; then
+    for supply in /sys/class/power_supply/*; do
+        [ -d "$supply" ] || continue
+        printf '\n[%s]\n' "$(basename "$supply")"
+        for field in type status capacity model_name manufacturer; do
+            if [ -r "$supply/$field" ]; then
+                printf '%s: ' "$field"
+                cat "$supply/$field"
+            fi
+        done
+    done
+fi
+section 'Bluetooth'
+status 'detected but untested'
+command_report bluetoothctl bluetoothctl list
+section 'Camera'
+status 'detected but untested'
+found_camera=no
+for device in /dev/video*; do
+    if [ -e "$device" ]; then
+        printf '%s detected\n' "$device"
+        found_camera=yes
+    fi
+done
+[ "$found_camera" = yes ] || printf 'Status: no video device detected\n'
+section 'Failed services'
+command_report systemctl systemctl --failed --no-legend --no-pager

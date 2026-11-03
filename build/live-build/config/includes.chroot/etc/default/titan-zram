@@ -1,0 +1,5 @@
+# Titan OS zram policy.
+# The size is a percentage of detected physical RAM, capped for predictability.
+ZRAM_FRACTION=50
+ZRAM_MAX_MIB=4096
+ZRAM_PRIORITY=100

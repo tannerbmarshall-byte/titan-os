@@ -1,0 +1,75 @@
+#!/bin/sh
+set -eu
+
+umask 077
+CONFIG_DIR=${XDG_CONFIG_HOME:-"$HOME/.config"}/titan-os
+SETTINGS_FILE=$CONFIG_DIR/settings.conf
+MARKER_FILE=$CONFIG_DIR/first-run-complete
+
+[ -e "$MARKER_FILE" ] && exit 0
+mkdir -p "$CONFIG_DIR"
+
+ask_text() {
+    prompt=$1
+    default=$2
+    if [ -t 0 ]; then
+        printf '%s [%s]: ' "$prompt" "$default"
+        IFS= read -r answer || true
+        printf '%s\n' "${answer:-$default}"
+    else
+        printf '%s\n' "$default"
+    fi
+}
+
+if command -v zenity >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
+    theme=$(zenity --list --radiolist --title='Titan OS first-run setup' \
+        --text='Choose a desktop theme.' --column='Use' --column='Theme' \
+        TRUE Dark FALSE Light --height=250 --width=420) || exit 0
+    if zenity --question --title='Titan OS privacy' \
+        --text='Allow local hardware and performance information for manual export? No data is sent automatically.'; then
+        telemetry=enabled
+    else
+        telemetry=disabled
+    fi
+    if zenity --question --title='Titan OS updates' \
+        --text='Allow automatic package updates? You can change this later.'; then
+        updates=enabled
+    else
+        updates=disabled
+    fi
+    if zenity --question --title='Titan OS hardware report' \
+        --text='Create an offline hardware report now?'; then
+        /usr/local/bin/titan-hardware-info --save "$CONFIG_DIR/hardware-report.txt" || true
+        report_created=yes
+    else
+        report_created=no
+    fi
+else
+    echo 'Titan OS first-run setup'
+    echo 'No graphical dialog tool is available; using text defaults.'
+    theme=$(ask_text 'Theme (Dark/Light)' 'Dark')
+    telemetry=$(ask_text 'Local telemetry (enabled/disabled)' 'disabled')
+    updates=$(ask_text 'Automatic updates (enabled/disabled)' 'enabled')
+    report_created=no
+fi
+
+case "$theme" in Dark|Light) ;; *) theme=Dark ;; esac
+case "$telemetry" in enabled|disabled) ;; *) telemetry=disabled ;; esac
+case "$updates" in enabled|disabled) ;; *) updates=enabled ;; esac
+
+{
+    printf '%s\n' '# Titan OS first-run preferences. This file is user-local and export-only.'
+    printf 'theme=%s\n' "$theme"
+    printf 'telemetry=%s\n' "$telemetry"
+    printf 'updates=%s\n' "$updates"
+    printf 'hardware_report_created=%s\n' "$report_created"
+} > "$SETTINGS_FILE"
+
+date -u '+%Y-%m-%dT%H:%M:%SZ' > "$MARKER_FILE"
+
+if command -v zenity >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
+    zenity --info --title='Titan OS setup complete' \
+        --text='Preferences saved. Hardware support remains unconfirmed until tested on the target machine.' || true
+else
+    echo "Titan OS setup complete. Preferences saved to $SETTINGS_FILE"
+fi

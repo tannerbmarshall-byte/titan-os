@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+ZRAM_DEVICE=/dev/zram0
+
+if [ ! -e "$ZRAM_DEVICE" ]; then
+    exit 0
+fi
+
+if swapon --show=NAME --noheadings 2>/dev/null | awk -v device="$ZRAM_DEVICE" '$1 == device { found=1 } END { exit !found }'; then
+    swapoff "$ZRAM_DEVICE"
+fi
+
+if command -v zramctl >/dev/null 2>&1; then
+    zramctl --reset "$ZRAM_DEVICE" >/dev/null 2>&1 || true
+fi

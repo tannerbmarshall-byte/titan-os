@@ -1,0 +1,21 @@
+#!/bin/sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PROJECT_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd)
+
+lb build
+
+ISO_FILES=$(find . -maxdepth 1 -type f -name '*.iso' -print)
+if [ -z "$ISO_FILES" ]; then
+    echo "Titan OS: lb build completed without producing an ISO" >&2
+    exit 1
+fi
+
+if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum -- *.iso > titan-os-alpha-1.iso.sha256
+else
+    shasum -a 256 *.iso > titan-os-alpha-1.iso.sha256
+fi
+
+"$PROJECT_ROOT/scripts/record-build-metadata.sh" "$PROJECT_ROOT/build/live-build/build-metadata.txt"

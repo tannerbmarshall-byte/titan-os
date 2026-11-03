@@ -1,0 +1,5 @@
+NAME=Titan OS
+VERSION=Alpha 1
+CODENAME=trixie
+ARCHITECTURE=amd64
+STATUS=development

@@ -1,0 +1,15 @@
+[Unit]
+Description=Enable Titan OS compressed swap
+Documentation=file:///usr/share/doc/titan-os/README.md
+DefaultDependencies=no
+After=local-fs.target systemd-modules-load.service
+Before=swap.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/titan-zram-setup
+ExecStop=/usr/local/libexec/titan-zram-teardown
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
