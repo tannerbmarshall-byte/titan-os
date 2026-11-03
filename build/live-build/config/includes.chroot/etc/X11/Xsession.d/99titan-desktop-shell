@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Start Titan's desktop shell from the X session pipeline.  This covers live
+# sessions where the user home is created after /etc/skel is processed and
+# where no desktop session manager consumes XDG autostart entries.
+if [ -n "${DISPLAY:-}" ]; then
+    (
+        sleep 2
+        if command -v lxqt-panel >/dev/null 2>&1; then
+            lxqt-panel >>"${XDG_CACHE_HOME:-$HOME/.cache}/titan-desktop-shell.log" 2>&1
+        fi
+    ) &
+
+    (
+        sleep 2
+        if command -v pcmanfm-qt >/dev/null 2>&1; then
+            pcmanfm-qt --desktop >>"${XDG_CACHE_HOME:-$HOME/.cache}/titan-desktop-shell.log" 2>&1
+        fi
+    ) &
+fi
