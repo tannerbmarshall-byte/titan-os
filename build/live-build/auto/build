@@ -4,7 +4,7 @@ set -eu
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 PROJECT_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd)
 
-lb build
+lb build noauto
 
 ISO_FILES=$(find . -maxdepth 1 -type f -name '*.iso' -print)
 if [ -z "$ISO_FILES" ]; then
