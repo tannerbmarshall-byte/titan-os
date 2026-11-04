@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=TitanOS Diagnostics Center
+Comment=Check TitanOS services and system health
+Exec=/usr/local/bin/titan-diagnostics-center
+Icon=titan-settings
+Terminal=false
+Categories=System;Settings;

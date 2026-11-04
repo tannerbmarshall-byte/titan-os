@@ -13,6 +13,7 @@ DEFAULTS="$ROOT/build/live-build/config/includes.chroot/usr/local/share/titan-os
 PACKAGE_LIST="$ROOT/build/live-build/config/package-lists/titan.list.chroot"
 FIREFOX_DESKTOP="$ROOT/build/live-build/config/includes.chroot/etc/skel/Desktop/firefox-esr.desktop"
 MIMEAPPS="$ROOT/build/live-build/config/includes.chroot/etc/skel/.config/mimeapps.list"
+BOOT_CONFIG="$ROOT/build/live-build/config/includes.binary/boot/grub/config.cfg"
 
 command -v xmllint >/dev/null 2>&1 && xmllint --noout "$OPENBOX" || true
 sh -n "$DEFAULTS"
@@ -32,8 +33,10 @@ grep -q 'dbus-run-session' "$DESKTOP_LAUNCHER"
 grep -q 'lxqt-panel' "$DESKTOP_LAUNCHER"
 grep -q 'pcmanfm-qt --desktop' "$DESKTOP_LAUNCHER"
 grep -q '^Exec=firefox-esr %u$' "$FIREFOX_DESKTOP"
+grep -q '^Icon=titan-browser$' "$FIREFOX_DESKTOP"
 grep -q '^x-scheme-handler/https=firefox-esr.desktop$' "$MIMEAPPS"
 grep -q '^xdg-utils$' "$PACKAGE_LIST"
+grep -q '^set timeout=1$' "$BOOT_CONFIG"
 grep -q 'TITAN OS' "$WALLPAPER"
 grep -q '^brightnessctl$' "$PACKAGE_LIST"
 grep -q '^power-profiles-daemon$' "$PACKAGE_LIST"

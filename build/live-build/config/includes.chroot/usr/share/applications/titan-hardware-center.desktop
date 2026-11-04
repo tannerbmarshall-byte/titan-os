@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=TitanOS Hardware Center
+Comment=Inspect detected hardware and compatibility
+Exec=/usr/local/bin/titan-hardware-center
+Icon=titan-settings
+Terminal=false
+Categories=System;Settings;

@@ -47,6 +47,7 @@ for file in \
     build/live-build/config/includes.chroot/usr/local/libexec/titan-zram-setup \
     build/live-build/config/includes.chroot/etc/systemd/system/titan-zram.service \
     build/live-build/config/includes.chroot/usr/share/backgrounds/titan-os.svg \
+    build/live-build/config/includes.binary/boot/grub/config.cfg \
     tests/shell/test-zram-files.sh \
     tests/shell/test-user-tools.sh \
     tests/shell/test-live-build-config.sh \

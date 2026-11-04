@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=TitanOS Power Center
+Comment=Lock, suspend, restart, or shut down TitanOS
+Exec=/usr/local/bin/titan-power-center
+Icon=titan-settings
+Terminal=false
+Categories=System;Settings;
