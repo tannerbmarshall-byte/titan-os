@@ -38,6 +38,12 @@ for file in \
     build/live-build/config/includes.chroot/usr/local/bin/titan-hardware-info \
     build/live-build/config/includes.chroot/usr/local/bin/titan-suspend-diagnostics \
     build/live-build/config/includes.chroot/usr/local/bin/titan-performance-report \
+    build/live-build/config/includes.chroot/usr/local/bin/titan-control-center \
+    build/live-build/config/includes.chroot/usr/local/bin/titan-app-store \
+    build/live-build/config/includes.chroot/usr/local/bin/titan-update-center \
+    build/live-build/config/includes.chroot/usr/local/bin/titan-hardware-center \
+    build/live-build/config/includes.chroot/usr/local/bin/titan-diagnostics-center \
+    build/live-build/config/includes.chroot/usr/local/bin/titan-power-center \
     build/live-build/config/includes.chroot/usr/local/libexec/titan-zram-setup \
     build/live-build/config/includes.chroot/etc/systemd/system/titan-zram.service \
     build/live-build/config/includes.chroot/usr/share/backgrounds/titan-os.svg \

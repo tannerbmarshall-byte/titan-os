@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+if ! command -v zenity >/dev/null 2>&1 || [ -z "${DISPLAY:-}" ]; then exit 1; fi
+failed=$(systemctl --failed --no-legend --no-pager 2>/dev/null || true)
+if [ -n "$failed" ]; then
+    zenity --warning --title='TitanOS Diagnostics Center' \
+        --text="Failed services detected:\n\n$failed" --width=700 || true
+else
+    zenity --info --title='TitanOS Diagnostics Center' \
+        --text='TitanOS Diagnostics Center\n\nNo failed system services were reported.' --width=520 || true
+fi

@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+
+if ! command -v zenity >/dev/null 2>&1 || [ -z "${DISPLAY:-}" ]; then exit 1; fi
+zenity --info --title='TitanOS App Store' \
+    --text='TitanOS App Store\n\nThe first release uses Debian packages with TitanOS branding.\nUse Update Center to refresh package information, then install trusted packages from the terminal.' \
+    --width=520 || true

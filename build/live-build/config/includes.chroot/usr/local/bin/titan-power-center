@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+if ! command -v zenity >/dev/null 2>&1 || [ -z "${DISPLAY:-}" ]; then exit 1; fi
+choice=$(zenity --list --title='TitanOS Power Center' \
+    --text='Choose a power action' --column='Action' \
+    'Lock Screen' 'Suspend' 'Restart' 'Shut Down' --height=280 --width=420) || exit 0
+case "$choice" in
+    'Lock Screen') loginctl lock-session ;;
+    'Suspend') systemctl suspend ;;
+    'Restart') systemctl reboot ;;
+    'Shut Down') systemctl poweroff ;;
+esac

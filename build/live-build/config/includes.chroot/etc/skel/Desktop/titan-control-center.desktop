@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=TitanOS Control Center
+Comment=Manage TitanOS
+Exec=/usr/local/bin/titan-control-center
+Icon=titan-control-center
+Terminal=false
+Categories=Settings;System;

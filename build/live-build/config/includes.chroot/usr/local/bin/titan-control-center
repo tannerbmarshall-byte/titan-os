@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+if ! command -v zenity >/dev/null 2>&1 || [ -z "${DISPLAY:-}" ]; then
+    echo 'TitanOS Control Center requires a graphical session.' >&2
+    exit 1
+fi
+
+while true; do
+    choice=$(zenity --list --title='TitanOS Control Center' \
+        --text='Manage your TitanOS system' --column='TitanOS' \
+        'App Store' 'Update Center' 'Hardware Center' 'Diagnostics Center' \
+        'Power Center' 'Web Browser' 'File Manager' 'Audio Mixer' 'Text Editor' \
+        --height=420 --width=520) || exit 0
+    case "$choice" in
+        'App Store') titan-app-store ;;
+        'Update Center') titan-update-center ;;
+        'Hardware Center') titan-hardware-center ;;
+        'Diagnostics Center') titan-diagnostics-center ;;
+        'Power Center') titan-power-center ;;
+        'Web Browser') firefox-esr & ;;
+        'File Manager') pcmanfm-qt & ;;
+        'Audio Mixer') pavucontrol-qt & ;;
+        'Text Editor') featherpad & ;;
+    esac
+done

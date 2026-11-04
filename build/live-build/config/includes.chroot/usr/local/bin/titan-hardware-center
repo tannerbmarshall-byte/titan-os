@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+report=${XDG_CONFIG_HOME:-$HOME/.config}/titan-os/hardware-report.txt
+mkdir -p "$(dirname -- "$report")"
+/usr/local/bin/titan-hardware-info --save "$report"
+if command -v zenity >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
+    zenity --text-info --title='TitanOS Hardware Center' --filename="$report" \
+        --width=900 --height=650 || true
+else
+    cat "$report"
+fi

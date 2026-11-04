@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+if ! command -v zenity >/dev/null 2>&1 || [ -z "${DISPLAY:-}" ]; then exit 1; fi
+if zenity --question --title='TitanOS Update Center' \
+    --text='Refresh package information and check for available updates?'; then
+    qterminal -e sh -c 'sudo apt update; printf "\nPress Enter to close..."; read -r _' &
+fi
