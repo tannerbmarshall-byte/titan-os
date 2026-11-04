@@ -1,11 +1,22 @@
 #!/bin/sh
-set -eu
+set -u
 
 export XDG_CURRENT_DESKTOP=LXQt
 export XDG_SESSION_DESKTOP=LXQt
 
-exec dbus-run-session -- sh -c '
-    lxqt-panel &
-    pcmanfm-qt --desktop &
-    wait
-'
+cache_dir=${XDG_CACHE_HOME:-"$HOME/.cache"}
+mkdir -p "$cache_dir"
+log_file=$cache_dir/titan-desktop-shell.log
+
+printf '%s desktop shell starting (DISPLAY=%s SESSION=%s)\n' \
+    "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "${DISPLAY:-unset}" "${DESKTOP_SESSION:-unset}" >> "$log_file"
+
+if ! pgrep -u "$(id -u)" -x lxqt-panel >/dev/null 2>&1; then
+    lxqt-panel >> "$log_file" 2>&1 &
+fi
+
+if ! pgrep -u "$(id -u)" -f 'pcmanfm-qt --desktop' >/dev/null 2>&1; then
+    pcmanfm-qt --desktop >> "$log_file" 2>&1 &
+fi
+
+exit 0
