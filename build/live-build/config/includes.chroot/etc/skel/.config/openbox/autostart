@@ -1,13 +1,7 @@
 #!/bin/sh
 
-# Openbox is the lightweight window manager; start the LXQt shell explicitly
-# so live sessions receive a panel, menu, and desktop icons.
-if command -v lxqt-panel >/dev/null 2>&1; then
-    lxqt-panel &
-fi
-
-if command -v pcmanfm-qt >/dev/null 2>&1; then
-    pcmanfm-qt --desktop &
+if command -v titan-desktop-shell >/dev/null 2>&1; then
+    titan-desktop-shell &
 fi
 
 exit 0

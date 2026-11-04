@@ -6,15 +6,8 @@
 if [ -n "${DISPLAY:-}" ]; then
     (
         sleep 2
-        if command -v lxqt-panel >/dev/null 2>&1; then
-            lxqt-panel >>"${XDG_CACHE_HOME:-$HOME/.cache}/titan-desktop-shell.log" 2>&1
-        fi
-    ) &
-
-    (
-        sleep 2
-        if command -v pcmanfm-qt >/dev/null 2>&1; then
-            pcmanfm-qt --desktop >>"${XDG_CACHE_HOME:-$HOME/.cache}/titan-desktop-shell.log" 2>&1
+        if command -v titan-desktop-shell >/dev/null 2>&1; then
+            titan-desktop-shell >>"${XDG_CACHE_HOME:-$HOME/.cache}/titan-desktop-shell.log" 2>&1
         fi
     ) &
 fi

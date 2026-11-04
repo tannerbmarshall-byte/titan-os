@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+export XDG_CURRENT_DESKTOP=LXQt
+export XDG_SESSION_DESKTOP=LXQt
+
+exec dbus-run-session -- sh -c '
+    lxqt-panel &
+    pcmanfm-qt --desktop &
+    wait
+'
