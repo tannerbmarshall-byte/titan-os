@@ -27,6 +27,7 @@ pcmanfm-qt
 qterminal
 featherpad
 firefox-esr
+xdg-utils
 pavucontrol-qt
 
 # Network, audio, Bluetooth, power, removable media, and authorization
