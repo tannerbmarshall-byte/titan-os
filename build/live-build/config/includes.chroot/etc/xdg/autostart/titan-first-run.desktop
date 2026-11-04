@@ -5,3 +5,4 @@ Comment=Configure Titan OS preferences and create an offline hardware report
 Exec=/usr/local/bin/titan-first-run
 OnlyShowIn=LXQt;
 X-GNOME-Autostart-enabled=true
+X-LXQt-Need-Tray=false

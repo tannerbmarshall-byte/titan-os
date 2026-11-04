@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Welcome to TitanOS
+Comment=Learn about this TitanOS release
+Exec=/usr/local/bin/titan-welcome
+Icon=titan-control-center
+Terminal=false
+Categories=System;Settings;
+StartupNotify=true

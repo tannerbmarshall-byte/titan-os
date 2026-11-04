@@ -70,6 +70,10 @@ date -u '+%Y-%m-%dT%H:%M:%SZ' > "$MARKER_FILE"
 if command -v zenity >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
     zenity --info --title='Titan OS setup complete' \
         --text='Preferences saved. Hardware support remains unconfirmed until tested on the target machine.' || true
+    if zenity --question --title='Titan OS welcome' \
+        --text='Open the TitanOS welcome guide?'; then
+        /usr/local/bin/titan-welcome &
+    fi
 else
     echo "Titan OS setup complete. Preferences saved to $SETTINGS_FILE"
 fi

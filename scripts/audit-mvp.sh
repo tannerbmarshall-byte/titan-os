@@ -35,6 +35,7 @@ for file in \
     build/live-build/auto/config \
     build/live-build/config/package-lists/titan.list.chroot \
     build/live-build/config/includes.chroot/usr/local/bin/titan-first-run \
+    build/live-build/config/includes.chroot/usr/local/bin/titan-welcome \
     build/live-build/config/includes.chroot/usr/local/bin/titan-hardware-info \
     build/live-build/config/includes.chroot/usr/local/bin/titan-suspend-diagnostics \
     build/live-build/config/includes.chroot/usr/local/bin/titan-performance-report \
@@ -47,6 +48,8 @@ for file in \
     build/live-build/config/includes.chroot/usr/local/libexec/titan-zram-setup \
     build/live-build/config/includes.chroot/etc/systemd/system/titan-zram.service \
     build/live-build/config/includes.chroot/usr/share/backgrounds/titan-os.svg \
+    build/live-build/config/includes.chroot/usr/share/applications/titan-welcome.desktop \
+    build/live-build/config/includes.chroot/usr/share/applications/titan-system-info.desktop \
     build/live-build/config/includes.binary/boot/grub/config.cfg \
     build/live-build/config/includes.chroot/etc/sddm.conf.d/10-titanos.conf \
     build/live-build/config/includes.chroot/usr/share/xsessions/titanos.desktop \

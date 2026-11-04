@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+
+if ! command -v zenity >/dev/null 2>&1 || [ -z "${DISPLAY:-}" ]; then
+    cat /etc/titan-os/release
+    exit 0
+fi
+
+release=$(sed -n 's/^VERSION=//p' /etc/titan-os/release)
+codename=$(sed -n 's/^CODENAME=//p' /etc/titan-os/release)
+
+zenity --info \
+    --title='Welcome to TitanOS' \
+    --window-icon='titan-control-center' \
+    --width=520 \
+    --text="<big><b>Welcome to TitanOS</b></big>\n\nA lightweight, focused Linux desktop built for everyday work.\n\n<b>Release:</b> $release ($codename)\n\nStart with Control Center to configure hardware, updates, power, and diagnostics." || true
+
+if zenity --question --title='TitanOS Welcome' --text='Open TitanOS Control Center now?'; then
+    /usr/local/bin/titan-control-center &
+fi

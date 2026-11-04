@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=TitanOS App Store
+Comment=Discover trusted TitanOS packages
+Exec=/usr/local/bin/titan-app-store
+Icon=titan-store
+Terminal=false
+Categories=System;PackageManager;
+StartupNotify=true
