@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=TitanOS Desktop
+Comment=TitanOS LXQt desktop session
+Exec=/usr/bin/startlxqt
+TryExec=/usr/bin/startlxqt
+Type=Application
+DesktopNames=LXQt;

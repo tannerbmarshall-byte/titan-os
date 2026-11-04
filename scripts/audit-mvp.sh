@@ -48,6 +48,8 @@ for file in \
     build/live-build/config/includes.chroot/etc/systemd/system/titan-zram.service \
     build/live-build/config/includes.chroot/usr/share/backgrounds/titan-os.svg \
     build/live-build/config/includes.binary/boot/grub/config.cfg \
+    build/live-build/config/includes.chroot/etc/sddm.conf.d/10-titanos.conf \
+    build/live-build/config/includes.chroot/usr/share/xsessions/titanos.desktop \
     tests/shell/test-zram-files.sh \
     tests/shell/test-user-tools.sh \
     tests/shell/test-live-build-config.sh \
